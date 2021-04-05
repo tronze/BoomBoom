@@ -1,0 +1,9 @@
+venv/*
+__pycache__/*
+static/*
+
+db.sqlite3
+reader.py
+new_data.json
+
+config.py
