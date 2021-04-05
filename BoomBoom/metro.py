@@ -1,5 +1,6 @@
 import copy
 
+from .models import Congestion
 from .stations import get_stations
 
 
@@ -7,9 +8,10 @@ class Metro:
     routing = {}
     stations = {}
 
-    def __init__(self, stations: get_stations()) -> None:
+    def __init__(self, stations: get_stations(), timestamp) -> None:
         super().__init__()
         self.stations = stations
+        self.timestamp = timestamp
 
     def find_path(self, _from, _to):
         self.routing = {}
@@ -31,7 +33,16 @@ class Metro:
     def visit_place(self, visit):
         self.routing[visit]['visited'] = 1
         for to_go, betweenDist in self.stations[visit]["links"].items():
-            to_dist = self.routing[visit]['shortestDist'] + betweenDist
+            try:
+                cong = Congestion.objects.get(
+                    _from=visit,
+                    _to=to_go,
+                    timestamp=self.timestamp,
+                ).cong
+            except:
+                cong = 0
+            self.stations[visit]["links"][to_go] = cong
+            to_dist = self.routing[visit]['shortestDist'] + cong
             if (self.routing[to_go]['shortestDist'] >= to_dist) or not self.routing[to_go]['route']:
                 self.routing[to_go]['shortestDist'] = to_dist
                 self.routing[to_go]['route'] = copy.deepcopy(self.routing[visit]['route'])

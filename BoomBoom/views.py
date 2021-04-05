@@ -20,23 +20,9 @@ class SearchUncrowdedRouteView(APIView):
         else:
             timestamp = f"{timezone.localtime().strftime('%Y-%m-%d')} {querystring.get('departureTime')}"
 
-        for idx, data in stations.items():
-            for l in data["links"]:
-                try:
-                    cong = Congestion.objects.get(
-                        _from=idx,
-                        _to=l,
-                        timestamp=timestamp,
-                    ).cong
-                except:
-                    cong = 0
-                stations[idx]["links"][l] = cong
-
-        print(stations)
-
         _from = int(querystring.get("from"))
         _to = int(querystring.get("to"))
-        metro = Metro(stations)
+        metro = Metro(stations, timestamp)
         routes = metro.find_path(_from, _to)
         routes.append(_to)
         context = {

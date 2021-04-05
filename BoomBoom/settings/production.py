@@ -3,7 +3,7 @@ from .config import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['52.231.90.97']
+ALLOWED_HOSTS = ['boomboom.azurewebsites.net']
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
